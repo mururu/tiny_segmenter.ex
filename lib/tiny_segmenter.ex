@@ -60,7 +60,7 @@ defmodule TinySegmenter do
     segments = ["B3", "B2", "B1"] ++ codepoints ++ ["E1", "E2", "E3"]
     ctypes = ["O", "O", "O"] ++ Enum.map(codepoints, fn(c)-> ctype(c) end) ++ ["O", "O", "O"]
 
-    [result: result, word: word, p1: p1, p2: p2, p3: p3] =
+    [result: result, word: word, p1: _p1, p2: _p2, p3: _p3] =
       Enum.reduce :lists.seq(4, Enum.count(segments) - 4), [result: [], word: Enum.at(segments, 3), p1: "U", p2: "U", p3: "U"], fn(i, [result: result, word: word, p1: p1, p2: p2, p3: p3])->
         score = @bias
         {words, chars} = Enum.reduce :lists.seq(-3, 2), {[], []}, fn(idx, {words, chars})->
@@ -84,7 +84,6 @@ defmodule TinySegmenter do
   end
 
   def sum_scores(p1, p2, p3, [w1, w2, w3, w4, w5, w6], [c1, c2, c3, c4, c5, c6]) do
-    score = 0
     list = [
       [:UP1, p1], [:UP2, p2], [:UP3, p3],
       [:BP1, p1, p2], [:BP2, p2, p3],
@@ -106,7 +105,7 @@ defmodule TinySegmenter do
   end
 
   def ctype(char) do
-    { _, value } = Enum.find @chartype, {nil, "O"}, fn({type, value})-> char == type end
+    { _, value } = Enum.find @chartype, {nil, "O"}, fn({type, _})-> char == type end
     value
   end
 
