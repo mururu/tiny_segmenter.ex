@@ -61,10 +61,10 @@ defmodule TinySegmenter do
     ctypes = ["O", "O", "O"] ++ Enum.map(codepoints, fn(c)-> ctype(c) end) ++ ["O", "O", "O"]
 
     [result: result, word: word, p1: p1, p2: p2, p3: p3] =
-      Enum.reduce :lists.seq(4, Enum.count(segments) - 4), [result: [], word: Enum.at!(segments, 3), p1: "U", p2: "U", p3: "U"], fn(i, [result: result, word: word, p1: p1, p2: p2, p3: p3])->
+      Enum.reduce :lists.seq(4, Enum.count(segments) - 4), [result: [], word: Enum.at(segments, 3), p1: "U", p2: "U", p3: "U"], fn(i, [result: result, word: word, p1: p1, p2: p2, p3: p3])->
         score = @bias
         {words, chars} = Enum.reduce :lists.seq(-3, 2), {[], []}, fn(idx, {words, chars})->
-          { words ++ [Enum.at!(segments, i + idx)], chars ++ [Enum.at!(ctypes, i + idx)] }
+          { words ++ [Enum.at(segments, i + idx)], chars ++ [Enum.at(ctypes, i + idx)] }
         end
 
         score = score + sum_scores(p1, p2, p3, words, chars)
@@ -74,7 +74,7 @@ defmodule TinySegmenter do
           word = ""
           p_new = "B"
         end
-        [result: result, word: "#{word}#{Enum.at!(segments, i)}", p1: p2, p2: p3, p3: p_new]
+        [result: result, word: "#{word}#{Enum.at(segments, i)}", p1: p2, p2: p3, p3: p_new]
       end
 
     unless nil?(word) || word == "" do
