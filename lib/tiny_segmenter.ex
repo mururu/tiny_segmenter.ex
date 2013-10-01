@@ -1,12 +1,12 @@
 defmodule TinySegmenter do
-  @chartype [ {"一", "M"}, {"二", "M"}, {"三", "M"}, {"四", "M"}, {"五", "M"}, {"六", "M"}, {"七", "M"}, {"八", "M"}, {"九", "M"}, {"十", "M"}, {"百", "M"}, {"千", "M"}, {"万", "M"}, {"億", "M"}, {"兆", "M"} ] ++
-            [ {"々", "H"}, {"〆", "H"}, {"ヵ", "H"}, {"ヶ", "H"} ] ++ Enum.map(:lists.seq(?一, ?龠), fn(i)-> {<< i :: utf8 >>, "H"} end) ++
-            Enum.map(:lists.seq(?ぁ, ?ん), fn(i)-> {<< i :: utf8 >>, "I"} end) ++
-            [ {"ﾞ", "K"}, {"ｰ", "K"}, {"ー", "K"} ] ++ Enum.map((:lists.seq(?ァ, ?ヴ) ++ :lists.seq(?ｱ, ?ﾝ)), fn(i)-> {<< i :: utf8 >>, "K"} end) ++
-            Enum.map((:lists.seq(?a, ?z) ++ :lists.seq(?A, ?Z) ++ :lists.seq(?ａ, ?ｚ) ++ :lists.seq(?Ａ, ?Ｚ)), fn(i)-> {<< i :: utf8 >>, "A"} end) ++
-            Enum.map((:lists.seq(0, ?9) ++ :lists.seq(?０, ?９)), fn(i)-> {<< i :: utf8 >>, "N"} end)
+  @chartype (lc b inlist ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "百", "千", "万", "億", "兆"], do: {b, "M"})
+         ++ (lc b inlist ["々", "〆", "ヵ", "ヶ"] ++ (lc cp inlist :lists.seq(?一, ?龠), do: << cp :: utf8 >>), do: {b, "H" })
+         ++ (lc b inlist ["ﾞ", "ｰ", "ー"]  ++ (lc cp inlist :lists.seq(?ァ, ?ヴ) ++ :lists.seq(?ｱ, ?ﾝ), do: << cp :: utf8 >>), do: {b, "K"})
+         ++ (lc cp inlist :lists.seq(?ぁ, ?ん), do: { << cp :: utf8 >>, "I" })
+         ++ (lc cp inlist :lists.seq(?a, ?z) ++ :lists.seq(?A, ?Z) ++ :lists.seq(?ａ, ?ｚ) ++ :lists.seq(?Ａ, ?Ｚ), do: { << cp :: utf8 >>, "A" })
 
-  @bias (-332)
+  @bias -332
+
   @score_map [ BC1: [{"HH", 6},{"II", 2461},{"KH", 406},{"OH", -1378}],
                BC2: [{"AA", -3267},{"AI", 2744},{"AN", -878},{"HH", -4070},{"HM", -1711},{"HN", 4012},{"HO", 3761},{"IA", 1327},{"IH", -1184},{"II", -1332},{"IK", 1721},{"IO", 5492},{"KI", 3831},{"KK", -8741},{"MH", -3132},{"MK", 3334},{"OO", -2920}],
                BC3: [{"HH", 996},{"HI", 626},{"HK", -721},{"HN", -1307},{"HO", -836},{"IH", -301},{"KK", 2762},{"MK", 1079},{"MM", 4034},{"OA", -1652},{"OH", 266}],
